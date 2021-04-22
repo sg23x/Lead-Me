@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lead_me/leads_form_page.dart';
+import 'package:lead_me/needs_homepage.dart';
 
 class LeadsOrNeeds extends StatefulWidget {
   @override
@@ -7,9 +9,12 @@ class LeadsOrNeeds extends StatefulWidget {
 }
 
 class _LeadsOrNeedsState extends State<LeadsOrNeeds> {
-  String countryValue;
-  String stateValue;
-  String cityValue;
+  String _leadTypeDropdownValue;
+  String _leadLocationDropdownValue;
+
+  String leadType;
+  String city;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +33,102 @@ class _LeadsOrNeedsState extends State<LeadsOrNeeds> {
               ),
               RaisedButton(
                 child: Text("i am in need"),
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    child: AlertDialog(
+                      content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return StreamBuilder(
+                              builder: (context, typesnap) {
+                                if (!typesnap.hasData) {
+                                  return SizedBox();
+                                }
+
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    DropdownButton(
+                                        hint: Text('Need type'),
+                                        value: _leadTypeDropdownValue,
+                                        items: typesnap.data.docs[1]
+                                            .data()['leadTypes']
+                                            .map<DropdownMenuItem<String>>(
+                                                (value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(
+                                              value,
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (val) {
+                                          setState(() {
+                                            _leadTypeDropdownValue = val;
+                                          });
+                                        }),
+                                    DropdownButton(
+                                        hint: Text('Location'),
+                                        value: _leadLocationDropdownValue,
+                                        items: typesnap.data.docs[0]
+                                            .data()['cities']
+                                            .map<DropdownMenuItem<String>>(
+                                                (value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(
+                                              value,
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (val) {
+                                          setState(() {
+                                            _leadLocationDropdownValue = val;
+                                          });
+                                        }),
+                                  ],
+                                );
+                              },
+                              stream: FirebaseFirestore.instance
+                                  .collection('metadata')
+                                  .snapshots());
+                        },
+                      ),
+                      actions: [
+                        FlatButton(
+                          onPressed: () {
+                            setState(() {
+                              city = _leadLocationDropdownValue;
+                              leadType = _leadTypeDropdownValue;
+                            });
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    NeedsHomePage(
+                                  city: this.city,
+                                  leadType: this.leadType,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Find leads',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ).then((v) {
+                    setState(() {
+                      _leadLocationDropdownValue = null;
+                      _leadTypeDropdownValue = null;
+                    });
+                  });
+                },
               ),
             ],
           )

@@ -222,7 +222,7 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
                               _isVerified = !_isVerified;
                             });
                           }),
-                      Text('i have verified the source'),
+                      Text('I have verified the source'),
                     ],
                   ),
                   RaisedButton(
@@ -252,10 +252,9 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
                               .toList()[0];
                         }
                       }
-                      print(
-                          "type:$_leadTypeDropdownValue // city: $city // name: $_nameOfProvider // contact: $_contactOfProvider // address: $_addressOfProvider // isVerified: $_isVerified // comments: $_comments");
+                      Navigator.of(context).pop();
                     },
-                    child: Text("Submit info"),
+                    child: Text("Submit"),
                   ),
                 ],
               ),
