@@ -32,7 +32,9 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
   String _cityTyped;
 
   bool _dummyBoolForSorting = true;
+  bool _dummyBoolForLoadingLeadType = true;
   List _citiesList = [];
+  List _leadTypeList = [];
 
   FirebaseFirestore fb = FirebaseFirestore.instance;
 
@@ -67,11 +69,15 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
                           return SizedBox();
                         }
 
+                        if (_dummyBoolForLoadingLeadType) {
+                          _leadTypeList = typesnap.data.data()['leadTypes'];
+                          _dummyBoolForLoadingLeadType = false;
+                        }
+
                         return DropdownButton(
                             hint: Text('Lead type'),
                             value: _leadTypeDropdownValue,
-                            items: typesnap.data
-                                .data()['leadTypes']
+                            items: _leadTypeList
                                 .map<DropdownMenuItem<String>>((value) {
                               return DropdownMenuItem<String>(
                                 value: value,
