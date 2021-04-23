@@ -14,7 +14,7 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
   List<DropdownMenuItem<String>> _othersDropdownList = [
     DropdownMenuItem(
       child: Text(
-        "Can't find city?",
+        "Can't find your city?",
         style: TextStyle(
           color: Colors.red,
         ),
@@ -213,69 +213,134 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
                       },
                     ),
                   ),
-                  Row(
-                    children: [
-                      Checkbox(
-                          value: _isVerified,
-                          onChanged: (val) {
-                            setState(() {
-                              _isVerified = !_isVerified;
-                            });
-                          }),
-                      Text('I have verified the source'),
-                    ],
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Have you personally verified this source?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 35,
+                                    child: Radio(
+                                      value: true,
+                                      groupValue: _isVerified,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _isVerified = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Text(
+                                    'yes',
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 35,
+                                    child: Radio(
+                                      value: false,
+                                      groupValue: _isVerified,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _isVerified = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Text('no'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                   RaisedButton(
-                    onPressed: () {
-                      if (_leadLocationDropdownValue != "others") {
-                        setState(() {
-                          city = _leadLocationDropdownValue;
-                        });
-                      } else {
-                        if (citiessnap.data
-                            .data()['cities']
-                            .where((element) =>
-                                element.toLowerCase().trim() ==
-                                _cityTyped.toLowerCase().trim())
-                            .isEmpty) {
-                          city = _cityTyped;
-                          fb.collection('metadata').doc('cities').update(
-                            {
-                              'cities': FieldValue.arrayUnion([city.trim()]),
-                            },
-                          );
-                        } else {
-                          city = citiessnap.data
-                              .data()['cities']
-                              .where((element) =>
-                                  element.toLowerCase().trim() == _cityTyped)
-                              .toList()[0];
-                        }
-                      }
+                    onPressed: (_leadTypeDropdownValue == null) ||
+                            (_leadLocationDropdownValue == null) ||
+                            ((_nameOfProvider == null ||
+                                    _nameOfProvider == "") &&
+                                (_contactOfProvider == null ||
+                                    _contactOfProvider == "") &&
+                                (_addressOfProvider == null ||
+                                    _addressOfProvider == "") &&
+                                (_comments == null || _comments == ""))
+                        ? null
+                        : () {
+                            if (_leadLocationDropdownValue != "others") {
+                              setState(() {
+                                city = _leadLocationDropdownValue;
+                              });
+                            } else {
+                              if (citiessnap.data
+                                  .data()['cities']
+                                  .where((element) =>
+                                      element.toLowerCase().trim() ==
+                                      _cityTyped.toLowerCase().trim())
+                                  .isEmpty) {
+                                city = _cityTyped;
+                                fb.collection('metadata').doc('cities').update(
+                                  {
+                                    'cities':
+                                        FieldValue.arrayUnion([city.trim()]),
+                                  },
+                                );
+                              } else {
+                                city = citiessnap.data
+                                    .data()['cities']
+                                    .where((element) =>
+                                        element.toLowerCase().trim() ==
+                                        _cityTyped)
+                                    .toList()[0];
+                              }
+                            }
 
-                      fb
-                          .collection('leads')
-                          .doc(_leadTypeDropdownValue)
-                          .collection(city)
-                          .doc(DateTime.now().microsecondsSinceEpoch.toString())
-                          .set({
-                        'leadType': _leadTypeDropdownValue,
-                        'city': city,
-                        'name': _nameOfProvider,
-                        'contact': _contactOfProvider,
-                        'address': _addressOfProvider,
-                        'comments': _comments,
-                        'isVerified': _isVerified,
-                      });
+                            fb
+                                .collection('leads')
+                                .doc(_leadTypeDropdownValue)
+                                .collection(city)
+                                .doc(DateTime.now()
+                                    .microsecondsSinceEpoch
+                                    .toString())
+                                .set({
+                              'leadType': _leadTypeDropdownValue,
+                              'city': city,
+                              'name': _nameOfProvider,
+                              'contact': _contactOfProvider,
+                              'address': _addressOfProvider,
+                              'comments': _comments,
+                              'isVerified': _isVerified,
+                            });
 
-                      Navigator.of(context).pop();
-                      showDialog(
-                        context: context,
-                        child: AlertDialog(
-                          content: Text('Thank You'),
-                        ),
-                      );
-                    },
+                            Navigator.of(context).pop();
+                            showDialog(
+                              context: context,
+                              child: AlertDialog(
+                                content: Text('Thank You'),
+                              ),
+                            );
+                          },
                     child: Text("Submit"),
                   ),
                 ],

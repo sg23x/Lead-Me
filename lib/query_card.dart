@@ -85,7 +85,7 @@ class CardContent extends StatelessWidget {
           Text('contact: $contact'),
           Text('address: $address'),
           Text('comments: $comments'),
-          Text('time: ' + timeago.format(timeAgo, locale: 'en_short')),
+          Text('time ago: ' + timeago.format(timeAgo, locale: 'en_short')),
         ],
       ),
     );
