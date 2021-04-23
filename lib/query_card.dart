@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class QueryCard extends StatelessWidget {
   QueryCard({
@@ -9,6 +10,7 @@ class QueryCard extends StatelessWidget {
     this.leadType,
     this.name,
     this.isVerified,
+    this.timeAgo,
   });
   String leadType;
   String city;
@@ -17,6 +19,7 @@ class QueryCard extends StatelessWidget {
   String address;
   String comments;
   bool isVerified;
+  DateTime timeAgo;
   @override
   Widget build(BuildContext context) {
     return isVerified
@@ -31,6 +34,7 @@ class QueryCard extends StatelessWidget {
               comments: this.comments,
               contact: this.contact,
               leadType: this.leadType,
+              timeAgo: timeAgo,
             ),
           )
         : CardContent(
@@ -45,23 +49,27 @@ class QueryCard extends StatelessWidget {
 }
 
 class CardContent extends StatelessWidget {
-  CardContent(
-      {this.address,
-      this.city,
-      this.comments,
-      this.contact,
-      this.leadType,
-      this.name});
+  CardContent({
+    this.address,
+    this.city,
+    this.comments,
+    this.contact,
+    this.leadType,
+    this.name,
+    this.timeAgo,
+  });
   String leadType;
   String city;
   String name;
   String contact;
   String address;
   String comments;
+  DateTime timeAgo;
   @override
   Widget build(BuildContext context) {
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
+
     return Container(
       padding: EdgeInsets.all(10),
       width: _width * 0.95,
@@ -77,6 +85,7 @@ class CardContent extends StatelessWidget {
           Text('contact: $contact'),
           Text('address: $address'),
           Text('comments: $comments'),
+          Text('time: ' + timeago.format(timeAgo, locale: 'en_short')),
         ],
       ),
     );

@@ -252,7 +252,29 @@ class _LeadsFormPageState extends State<LeadsFormPage> {
                               .toList()[0];
                         }
                       }
+
+                      fb
+                          .collection('leads')
+                          .doc(_leadTypeDropdownValue)
+                          .collection(city)
+                          .doc(DateTime.now().microsecondsSinceEpoch.toString())
+                          .set({
+                        'leadType': _leadTypeDropdownValue,
+                        'city': city,
+                        'name': _nameOfProvider,
+                        'contact': _contactOfProvider,
+                        'address': _addressOfProvider,
+                        'comments': _comments,
+                        'isVerified': _isVerified,
+                      });
+
                       Navigator.of(context).pop();
+                      showDialog(
+                        context: context,
+                        child: AlertDialog(
+                          content: Text('Thank You'),
+                        ),
+                      );
                     },
                     child: Text("Submit"),
                   ),

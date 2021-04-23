@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lead_me/leads_form_page.dart';
 import 'package:lead_me/needs_homepage.dart';
+import "package:collection/collection.dart";
 
 class LeadsOrNeeds extends StatefulWidget {
   @override
@@ -39,10 +40,20 @@ class _LeadsOrNeedsState extends State<LeadsOrNeeds> {
                     child: AlertDialog(
                       content: StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
+                          bool _dummyBoolForSorting = true;
+                          List _citiesList = [];
                           return StreamBuilder(
                               builder: (context, typesnap) {
                                 if (!typesnap.hasData) {
                                   return SizedBox();
+                                }
+                                if (_dummyBoolForSorting) {
+                                  _citiesList =
+                                      typesnap.data.docs[0].data()['cities'];
+                                  _citiesList.sort((a, b) {
+                                    return compareAsciiUpperCase(a, b);
+                                  });
+                                  _dummyBoolForSorting = false;
                                 }
 
                                 return Column(
@@ -72,8 +83,7 @@ class _LeadsOrNeedsState extends State<LeadsOrNeeds> {
                                     DropdownButton(
                                         hint: Text('Location'),
                                         value: _leadLocationDropdownValue,
-                                        items: typesnap.data.docs[0]
-                                            .data()['cities']
+                                        items: _citiesList
                                             .map<DropdownMenuItem<String>>(
                                                 (value) {
                                           return DropdownMenuItem<String>(
