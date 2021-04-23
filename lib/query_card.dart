@@ -34,7 +34,7 @@ class QueryCard extends StatelessWidget {
               comments: this.comments,
               contact: this.contact,
               leadType: this.leadType,
-              timeAgo: timeAgo,
+              timeAgo: this.timeAgo,
             ),
           )
         : CardContent(
@@ -44,6 +44,7 @@ class QueryCard extends StatelessWidget {
             comments: this.comments,
             contact: this.contact,
             leadType: this.leadType,
+            timeAgo: this.timeAgo,
           );
   }
 }
